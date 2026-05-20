@@ -402,6 +402,27 @@ function stopTimer(){
   updateAll();
 }
 
+function clearLocalLogs() {
+  // 1. Double check with a popup confirmation so you don't accidentally wipe it
+  if (confirm("Are you sure you want to clear the local history logs from this screen? (This will NOT delete them from your Notion database!)")) {
+    
+    // 2. Clear the local sessions array
+    sessions = [];
+    
+    // 3. Update your browser's local storage to be empty
+    localStorage.removeItem('jeeStudySessions');
+    
+    // 4. Refresh your HTML interface table display
+    updateAll();
+    
+    // 5. Briefly alert the user it worked
+    document.getElementById('timerStatus').textContent = 'Local logs cleared!';
+    setTimeout(() => {
+      document.getElementById('timerStatus').textContent = 'Select subject and start';
+    }, 2000);
+  }
+}
+
 function exportCSV(){
   if(!sessions.length){
     alert('No sessions to export yet.');
