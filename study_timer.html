@@ -363,13 +363,13 @@ function stopTimer(){
     return;
   }
 
-  // 1. Gather input variables safely FIRST to prevent script crashes
+  // 1. Calculate all values FIRST 
   const note = document.getElementById('noteInput').value.trim();
   const now = new Date();
   const endTime = now.toTimeString().slice(0, 5);
   const startTime = new Date(now - elapsed).toTimeString().slice(0, 5);
 
-  // 2. Send session details directly to Make.com Webhook
+  // 2. Now send them to Make.com
   fetch("https://hook.eu1.make.com/pfuzvk4ilqzku0216m54lazqm7r9gcog", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -377,9 +377,9 @@ function stopTimer(){
       date: dateKey(),
       subject: SNAMES[selSubj],
       duration_min: Math.round(elapsed / 60000),
-      note: note
-      startTime: startTime, // <-- Added this
-      endTime: endTime      // <-- Added this
+      note: note,
+      startTime: startTime,
+      endTime: endTime
     })
   }).catch(err => console.error("Webhook error:", err));
 
