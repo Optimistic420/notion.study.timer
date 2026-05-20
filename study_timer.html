@@ -169,6 +169,9 @@ body{
       <button class="ctrl-btn" id="btnPause" onclick="pauseTimer()" disabled>⏸ Pause</button>
       <button class="ctrl-btn stop-log" id="btnStop" onclick="stopTimer()" disabled>✓ Log</button>
       <button class="ctrl-btn" id="btnReset" onclick="resetTimer()" disabled>↻</button>
+      <button id="fullscreenBtn" onclick="toggleFullscreen()" style="background-color: #4a5568; color: white; border: none; padding: 8px 12px; margin-top: 10px; margin-left: 5px; cursor: pointer; border-radius: 4px;">
+   Fullscreen
+</button>
     </div>
   </div>
 
@@ -422,6 +425,36 @@ function clearLocalLogs() {
     }, 2000);
   }
 }
+
+function toggleFullscreen() {
+  const btn = document.getElementById('fullscreenBtn');
+  
+  // If the page is NOT currently in fullscreen, go fullscreen
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen()
+      .then(() => {
+        btn.innerHTML = "🔍 Minimize Screen";
+        btn.style.backgroundColor = "#718096";
+      })
+      .catch((err) => {
+        console.error(`Error attempting to enable fullscreen: ${err.message}`);
+      });
+  } else {
+    // If the page IS already in fullscreen, exit it
+    document.exitFullscreen();
+    btn.innerHTML = "Fullscreen";
+    btn.style.backgroundColor = "#4a5568";
+  }
+}
+
+// Optional: Listen for the standard 'Esc' key to fix the button text if you exit manually
+document.addEventListener('fullscreenchange', () => {
+  const btn = document.getElementById('fullscreenBtn');
+  if (!document.fullscreenElement) {
+    btn.innerHTML = "Fullscreen";
+    btn.style.backgroundColor = "#4a5568";
+  }
+});
 
 function exportCSV(){
   if(!sessions.length){
