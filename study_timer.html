@@ -362,6 +362,17 @@ function stopTimer(){
     resetTimer();
     return;
   }
+  // Send session details directly to Make.com Webhook
+  fetch("https://hook.eu1.make.com/pfuzvk4ilqzku0216m54lazqm7r9gcog", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      date: dateKey(),
+      subject: SNAMES[selSubj],
+      duration_min: Math.round(elapsed / 60000),
+      note: note
+    })
+  }).catch(err => console.error("Webhook error:", err));
   const now=new Date();
   const endTime=now.toTimeString().slice(0,5);
   const startTime=new Date(now-elapsed).toTimeString().slice(0,5);
