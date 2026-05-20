@@ -209,6 +209,9 @@ body{
     <div class="log-header">
       <h3>Session log</h3>
       <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+      <button id="resetLogsBtn" onclick="clearLocalLogs()" style="background-color: #e63946; color: white; border: none; padding: 8px 12px; margin-top: 10px; cursor: pointer; border-radius: 4px;">
+  🗑️ Clear Local History
+</button>
     </div>
     <div id="logBody"><div class="log-empty">No sessions logged yet. Start a timer above.</div></div>
   </div>
