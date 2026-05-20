@@ -378,6 +378,8 @@ function stopTimer(){
       subject: SNAMES[selSubj],
       duration_min: Math.round(elapsed / 60000),
       note: note
+      startTime: startTime, // <-- Added this
+      endTime: endTime      // <-- Added this
     })
   }).catch(err => console.error("Webhook error:", err));
 
