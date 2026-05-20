@@ -362,7 +362,14 @@ function stopTimer(){
     resetTimer();
     return;
   }
-  // Send session details directly to Make.com Webhook
+
+  // 1. Gather input variables safely FIRST to prevent script crashes
+  const note = document.getElementById('noteInput').value.trim();
+  const now = new Date();
+  const endTime = now.toTimeString().slice(0, 5);
+  const startTime = new Date(now - elapsed).toTimeString().slice(0, 5);
+
+  // 2. Send session details directly to Make.com Webhook
   fetch("https://hook.eu1.make.com/pfuzvk4ilqzku0216m54lazqm7r9gcog", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -373,16 +380,15 @@ function stopTimer(){
       note: note
     })
   }).catch(err => console.error("Webhook error:", err));
-  const now=new Date();
-  const endTime=now.toTimeString().slice(0,5);
-  const startTime=new Date(now-elapsed).toTimeString().slice(0,5);
-  const note=document.getElementById('noteInput').value.trim();
+
+  // 3. Save locally to your dashboard table logs
   sessions.push({subj:selSubj,ms:elapsed,date:dateKey(),note,startTime,endTime});
   try{
     localStorage.setItem('jeeStudySessions',JSON.stringify(sessions));
   }catch(e){
     console.error('Storage failed',e);
   }
+  
   resetTimer();
   document.getElementById('timerStatus').textContent='Session saved ✓';
   setTimeout(()=>{
