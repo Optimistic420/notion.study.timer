@@ -370,46 +370,59 @@ function resetTimer(){
   document.getElementById('btnPause').textContent='⏸ Pause';
 }
 
-function stopTimer(){
-  clearInterval(timerEl);
-  if(elapsed<5000){
-    resetTimer();
-    return;
+// A hidden helper that safely fetches or prompts for your private URL
+function getSecureWebhook() {
+  let savedUrl = localStorage.getItem('userMakeWebhook');
+  if (!savedUrl) {
+    savedUrl = prompt("🔧 Please enter your fresh Make.com Webhook URL to securely link your Notion Database:");
+    if (savedUrl && savedUrl.trim() !== "") {
+      localStorage.setItem('userMakeWebhook', savedUrl.trim());
+    }
   }
+  return savedUrl;
+}
 
+function stopTimer() {
   // 1. Calculate all values FIRST 
   const note = document.getElementById('noteInput').value.trim();
   const now = new Date();
   const endTime = now.toTimeString().slice(0, 5);
   const startTime = new Date(now - elapsed).toTimeString().slice(0, 5);
 
-  // 2. Now send them to Make.com
-  fetch("https://hook.eu1.make.com/pfuzvk4ilqzku0216m54lazqm7r9gcog", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      date: dateKey(),
-      subject: SNAMES[selSubj],
-      duration_min: Math.round(elapsed / 60000),
-      note: note,
-      startTime: startTime,
-      endTime: endTime
-    })
-  }).catch(err => console.error("Webhook error:", err));
+  // 2. Fetch the secure webhook from local browser storage
+  const secureWebhookUrl = getSecureWebhook();
+
+  if (secureWebhookUrl) {
+    // Now send them securely to Make.com using the dynamic variable
+    fetch(secureWebhookUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        date: dateKey(),
+        subject: SNAMES[selSubj],
+        duration_min: Math.round(elapsed / 60000),
+        note: note,
+        startTime: startTime,
+        endTime: endTime
+      })
+    }).catch(err => console.error("Webhook error:", err));
+  } else {
+    console.warn("Data sync skipped: No webhook URL provided by the user.");
+  }
 
   // 3. Save locally to your dashboard table logs
   sessions.push({subj:selSubj,ms:elapsed,date:dateKey(),note,startTime,endTime});
-  try{
-    localStorage.setItem('jeeStudySessions',JSON.stringify(sessions));
-  }catch(e){
-    console.error('Storage failed',e);
+  try {
+    localStorage.setItem('jeeStudySessions', JSON.stringify(sessions));
+  } catch(e) {
+    console.error('Storage failed', e);
   }
   
   resetTimer();
-  document.getElementById('timerStatus').textContent='Session saved ✓';
-  setTimeout(()=>{
-    document.getElementById('timerStatus').textContent='Select subject and start';
-  },2000);
+  document.getElementById('timerStatus').textContent = 'Session saved ✓';
+  setTimeout(() => {
+    document.getElementById('timerStatus').textContent = 'Select subject and start';
+  }, 2000);
   updateAll();
 }
 
