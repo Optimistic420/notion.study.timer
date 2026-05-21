@@ -230,6 +230,20 @@ body{
   <div class="notion-note">
     <strong>Import to Notion →</strong> Click <strong>Export CSV</strong> to download your session log. In Notion, open your database, click <code>⋯ → Merge with CSV</code> to append all rows. Columns: Date, Subject, Duration (min), Duration (h), Note, Start time, End time.
   </div>
+
+  <div style="text-align: center; margin-top: 30px;">
+  <button onclick="toggleWebhookPanel()" style="background: none; border: none; color: #a0aec0; font-size: 0.8rem; cursor: pointer; text-decoration: underline;">
+    ⚙️ Configure Webhook Link
+  </button>
+</div>
+
+<div id="webhookConfigPanel" style="display: none; margin: 15px auto; padding: 15px; max-width: 500px; background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+  <h4 style="margin-top: 0; font-family: serif; color: #2d3748;">Link Fresh Make.com Webhook</h4>
+  <input type="text" id="secureWebhookInput" placeholder="https://hook.eu1.make.com/..." style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box;">
+  <br>
+  <button onclick="saveWebhookFromInput()" style="background: #48bb78; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold;">Save Link</button>
+  <button onclick="toggleWebhookPanel()" style="background: #718096; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; margin-left: 5px;">Cancel</button>
+</div>
 </div>
 
 <script>
@@ -371,15 +385,32 @@ function resetTimer(){
 }
 
 // A hidden helper that safely fetches or prompts for your private URL
+// Check for the webhook in local storage
 function getSecureWebhook() {
-  let savedUrl = localStorage.getItem('userMakeWebhook');
-  if (!savedUrl) {
-    savedUrl = prompt("🔧 Please enter your fresh Make.com Webhook URL to securely link your Notion Database:");
-    if (savedUrl && savedUrl.trim() !== "") {
-      localStorage.setItem('userMakeWebhook', savedUrl.trim());
+  return localStorage.getItem('userMakeWebhook');
+}
+
+// Manually save the webhook from the secret custom layout input box
+function saveWebhookFromInput() {
+  const urlInput = document.getElementById('secureWebhookInput').value.trim();
+  if (urlInput) {
+    localStorage.setItem('userMakeWebhook', urlInput);
+    document.getElementById('webhookConfigPanel').style.display = 'none';
+    
+    const statusEl = document.getElementById('timerStatus');
+    if (statusEl) {
+      statusEl.textContent = 'Webhook linked successfully! 🎉';
+      setTimeout(() => { statusEl.textContent = 'Select subject and start'; }, 2500);
     }
+  } else {
+    alert("Please paste a valid URL.");
   }
-  return savedUrl;
+}
+
+// Simple toggle helper to show/hide the secret config layout box
+function toggleWebhookPanel() {
+  const panel = document.getElementById('webhookConfigPanel');
+  panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
 }
 
 function stopTimer() {
