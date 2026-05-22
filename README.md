@@ -93,4 +93,4 @@ The real-time data pipeline is now fully automated! Every session saved on the f
 *Created as part of an automated workflow setup for tracking core academic milestones.*
 
 
-Deployed website url : [Timer](https://optimistic420.github.io/notion.study.timer/study_timer.html)
+Deployed website url : [Timer](https://optimisthq.github.io/notion.study.timer/study_timer.html)
